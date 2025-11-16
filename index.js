@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const fs = require('fs');
-
+const validateRollFormat = require('./middleware/auth.js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -38,14 +38,14 @@ app.get('/', (req, res) => {
   res.render('auth');
 });
 
-app.post('/auth', async (req, res) => {
+app.post('/auth',validateRollFormat, async (req, res) => {
   const { roll_number, email } = req.body;
-
+ 
   let user = await User.findOne({ roll_number });
   
   if (user) {
     // Existing user → check email
-    if (user.email !== email) {
+    if (user.email !== email||user.roll_number!==roll_number) {
       return res.send('Wrong email for this roll. <a href="/">Try again</a>');
     }
   } else {
