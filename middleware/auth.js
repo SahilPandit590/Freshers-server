@@ -1,11 +1,13 @@
 // === ROLL NUMBER VALIDATION MIDDLEWARE ===
 const validateRollFormat = (req, res, next) => {
-  const roll = req.body?.roll_number || req.session?.roll;
+  let roll = req.body?.roll_number || req.session?.roll;
 
   if (!roll) {
     return res.status(400).send('Roll number is required.');
   }
-roll = roll.toLower().trim();
+
+roll = roll.trim().toLowerCase();
+
   // Regex: 2[45]vd1a05[0-6][0-9]
   const rollRegex = /^2[45]vd1a05[0-6][0-9]$/;
   
