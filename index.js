@@ -39,8 +39,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/auth',validateRollFormat, async (req, res) => {
-  const { roll_number, email } = req.body;
- 
+  
+  const { roll_number, email } = req.validatedRoll;
   let user = await User.findOne({ roll_number });
   
   if (user) {

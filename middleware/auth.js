@@ -1,6 +1,6 @@
 // === ROLL NUMBER VALIDATION MIDDLEWARE ===
 const validateRollFormat = (req, res, next) => {
-  const roll = (req.body?.roll_number || req.session?.roll);
+  const roll = req.body?.roll_number || req.session?.roll;
 
   if (!roll) {
     return res.status(400).send('Roll number is required.');
@@ -26,6 +26,4 @@ roll = roll.toLower().trim();
   next();
 };
 
-module.exports = {
-    validateRollFormat,
-}
+module.exports = validateRollFormat;
