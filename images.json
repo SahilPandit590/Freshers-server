@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Sample Photo 1",
+    "thumb": "https://picsum.photos/300/200?random=1",
+    "full": "https://picsum.photos/1200/800?random=1"
+  },
+  {
+    "name": "Sample Photo 2",
+    "thumb": "https://picsum.photos/300/200?random=2",
+    "full": "https://picsum.photos/1200/800?random=2"
+  },
+  {
+    "name": "Sample Photo 3",
+    "thumb": "https://picsum.photos/300/200?random=3",
+    "full": "https://picsum.photos/1200/800?random=3"
+  }
+]

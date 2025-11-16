@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login / Register</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { margin: 10px; padding: 10px; width: 300px; }
+  </style>
+</head>
+<body>
+  <h2>Image Gallery Access</h2>
+  <form method="POST" action="/auth">
+    <input type="text" name="roll_number" placeholder="Roll Number (e.g. 2023001)" required><br>
+    <input type="email" name="email" placeholder="Your Email" required><br>
+    <button type="submit">Register & Login</button>
+  </form>
+  <p><small>First time? Just enter and register.<br>Already registered? Same form to login.</small></p>
+</body>
+</html>
