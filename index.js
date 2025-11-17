@@ -66,7 +66,7 @@ app.post('/auth',validateRollFormat, async (req, res) => {
 // Gallery
 app.get('/gallery', (req, res) => {
   if (!req.session.loggedin) return res.redirect('/');
-  res.render('gallery', { images, roll: req.session.roll });
+  res.render('gallery', { images, roll: req.session?.roll });
 });
 
 app.get('/logout', (req, res) => {
