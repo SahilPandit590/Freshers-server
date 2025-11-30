@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- all your head stuff stays exactly the same -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Freshers • <%= roll %></title>
+
+  <link rel="preload" as="image" href="https://wsrv.nl/?url=https%3A%2F%2Fthrobbing-limit-1136.sahil-pandit-65a.workers.dev%2FIMG_0001.JPG&w=600&h=800&output=webp&q=78">
+  <link rel="preload" as="image" href="https://wsrv.nl/?url=https%3A%2F%2Fthrobbing-limit-1136.sahil-pandit-65a.workers.dev%2FIMG_0002.JPG&w=600&h=800&output=webp&q=78">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <meta name="theme-color" content="#000000">
+
+  <style>
+    *{box-sizing:border-box}
+    body{background:#000;color:#fafafa;margin:0;font-family:-apple-system,system-ui,sans-serif;overflow-x:hidden}
+    .header{position:sticky;top:0;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);z-index:100;padding:12px 16px;border-bottom:1px solid #333}
+    .header h1{font-size:16px;font-weight:700;margin:0 0 8px 0}
+    .header-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+    .stats{font-size:12px;color:#999;padding:4px 10px;background:#1a1a1a;border-radius:20px}
+    .search-box{background:#1a1a1a;border:1px solid #444;color:#fff;padding:6px 12px;border-radius:8px;font-size:13px;width:120px}
+    .feed{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:8px;padding-bottom:80px}
+    @media(min-width:768px){.feed{grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;max-width:900px;margin:0 auto}}
+    @media(min-width:1024px){.feed{grid-template-columns:repeat(4,1fr)}}
+
+    .post {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #111;
+    }
+
+    .post img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transition: transform 0.4s ease;
+    }
+
+    .post:hover img.loaded {
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn { from {opacity:0.3} to {opacity:1} }
+
+    .post:hover img {
+      transform: scale(1.06);
+    }
+
+    /* BEAUTIFUL DOWNLOAD BUTTON — FINAL VERSION */
+    .download-btn {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #000;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 22px;
+      border-radius: 30px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .post:hover .download-btn {
+      opacity: 1;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    .download-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    #confirmModal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+    #confirmModal.show{display:flex}
+  </style>
+</head>
+<body>
+
+<!-- header stays same -->
+<div class="header">
+  <h1>Freshers Gallery • <%= roll %></h1>
+  <div class="header-controls">
+    <input type="text" class="search-box" placeholder="Search IMG_..." oninput="search(this.value.trim())">
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-outline-light btn-sm" onclick="jumpToStart()">Start</button>
+      <button class="btn btn-outline-light btn-sm" onclick="jumpToEnd()">End</button>
+    </div>
+    <span class="stats" id="stats">0 images</span>
+    <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+  </div>
+</div>
+
+<div class="feed" id="feed"></div>
+
+<div id="confirmModal">
+  <h2>Leave Gallery?</h2>
+  <p>You will be logged out</p>
+  <div style="display:flex;gap:12px">
+    <button class="btn btn-outline-light" onclick="stayHere()">Stay</button>
+    <button class="btn btn-light" onclick="reallyLogout()">Logout</button>
+  </div>
+</div>
+
+<script>
+  const images = <%- JSON.stringify(images) %>;
+
+  const sorted = images
+    .map(img => ({ ...img, num: parseInt(img.name.match(/IMG_(\d+)/)?.[1] || '99999') }))
+    .sort((a, b) => a.num - b.num);
+
+  const PER_PAGE = 40;
+  let page = 0;
+  let filtered = sorted;
+  let isLoading = false;
+
+  const feed = document.getElementById("feed");
+  const stats = document.getElementById("stats");
+
+  function updateStats() {
+    const shown = Math.min((page + 1) * PER_PAGE, filtered.length);
+    stats.textContent = `${shown} / ${filtered.length} images`;
+  }
+
+  function render() {
+    const start = page * PER_PAGE;
+    const end = Math.min(start + PER_PAGE, filtered.length);
+    const frag = document.createDocumentFragment();
+
+    for (let i = start; i < end; i++) {
+      const imgData = filtered[i];
+      const filename = imgData.name.replace(/\.(jpe?g|png)$/i, '.webp'); // final filename
+
+      const post = document.createElement("div");
+      post.className = "post";
+
+      // LQIP background + lazy thumb
+      post.style.backgroundImage = `url('${imgData.lqip}')`;
+      post.style.backgroundSize = 'cover';
+      post.style.backgroundPosition = 'center';
+
+      post.innerHTML = `
+        <img class="post-img" src="${imgData.thumb}" alt="${imgData.name}" loading="lazy">
+      `;
+
+      const img = post.querySelector("img");
+      img.onload = () => img.classList.add("loaded");
+
+      // Prefetch full-res on thumb load (optional)
+      img.onload = () => { new Image().src = imgData.download; };
+
+      // DOWNLOAD BUTTON — FINAL & 100% WORKING
+      const downloadLink = document.createElement("a");
+      downloadLink.href = `/download/${filename}`;  // This hits your protected route
+      downloadLink.className = "download-btn";
+      downloadLink.target = "_blank"; // optional: opens in new tab (safe fallback)
+      downloadLink.rel = "noopener";
+      downloadLink.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Download
+      `;
+
+      post.appendChild(downloadLink);
+      frag.appendChild(post);
+    }
+
+    feed.appendChild(frag);
+    page++;
+    updateStats();
+  }
+
+  function search(q) {
+    q = q.toUpperCase();
+    filtered = q ? sorted.filter(i => i.name.toUpperCase().includes(q)) : sorted;
+    feed.innerHTML = "";
+    page = 0;
+    render();
+  }
+
+  function jumpToStart() { window.scrollTo(0, 0); }
+  function jumpToEnd() { window.scrollTo(document.body.scrollHeight); }
+
+  window.addEventListener("scroll", () => {
+    if (isLoading || page * PER_PAGE >= filtered.length) return;
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+      isLoading = true;
+      requestAnimationFrame(() => { render(); isLoading = false; });
+    }
+  });
+
+  history.pushState({}, "");
+  window.onpopstate = () => document.getElementById("confirmModal").classList.add("show");
+  window.stayHere = () => document.getElementById("confirmModal").classList.remove("show");
+  window.reallyLogout = () => location.href = "/logout";
+
+  render(); // Start
+</script>
+</body>
+</html>
