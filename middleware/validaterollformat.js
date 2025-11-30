@@ -25,7 +25,7 @@ const validateRollFormat = (allowedYears = ['24', '25'], allowedBranches = ['1',
     const yearRegexPart  = allowedYears.join('');   // "2425" → [24] means 24 or 25
     const branchRegexPart = allowedBranches.join(''); // "15"  → [15] means branch 1 or 5
 
-    const regex = new RegExp(`^2[${yearRegexPart}]VD[${branchRegexPart}]A05[0-6][0-9]$`);
+    const regex = new RegExp(`^2[${yearRegexPart}]VD[${branchRegexPart}]A05[0-7][0-9]$`);
 
     // 4. Test if roll matches the allowed pattern
     if (!regex.test(normalizedRoll)) {

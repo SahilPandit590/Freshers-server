@@ -13,7 +13,7 @@ const validateRollFormat = (allowedYears = ['24', '25'], allowedBranches = ['1']
     // Build dynamic regex
     const yearPart = allowedYears.join('');
     const branchPart = allowedBranches.map(b => b.padStart(1, '0')).join(''); // e.g., "1" → "1"
-    const regex = new RegExp(`^2[${yearPart}]VD[${branchPart}]A05[0-6][0-9]$`);
+    const regex = new RegExp(`^2[${yearPart}]VD[${branchPart}]A05[0-7][0-9]$`);
 
     if (!regex.test(normalizedRoll)) {
       return res.status(400).send(`
@@ -21,8 +21,8 @@ const validateRollFormat = (allowedYears = ['24', '25'], allowedBranches = ['1']
           <h2>Invalid Roll Number</h2>
           <p><strong>Expected Format Examples:</strong></p>
           <ul style="display:inline-block;text-align:left;">
-            ${allowedYears.includes('24') ? '<li>24VD1A0501 to 24VD1A0569</li>' : ''}
-            ${allowedYears.includes('25') ? '<li>25VD1A0501 to 25VD1A0569</li>' : ''}
+            ${allowedYears.includes('24') ? '<li>24VD1A0501 to 24VD1A0570</li>' : ''}
+            ${allowedYears.includes('25') ? '<li>25VD1A0501 to 25VD1A0570</li>' : ''}
           </ul>
           <p style="margin-top:15px;">
             Year: <strong>2${allowedYears.join(' or 2')}</strong> | 
