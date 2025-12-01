@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- all your head stuff stays exactly the same -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Freshers • <%= roll %></title>
-
-  <link rel="preload" as="image" href="https://wsrv.nl/?url=https%3A%2F%2Fthrobbing-limit-1136.sahil-pandit-65a.workers.dev%2FIMG_0001.JPG&w=600&h=800&output=webp&q=78">
-  <link rel="preload" as="image" href="https://wsrv.nl/?url=https%3A%2F%2Fthrobbing-limit-1136.sahil-pandit-65a.workers.dev%2FIMG_0002.JPG&w=600&h=800&output=webp&q=78">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <meta name="theme-color" content="#000000">
@@ -38,58 +34,151 @@
       transition: transform 0.4s ease;
     }
 
-    .post:hover img.loaded {
-      animation: fadeIn 0.6s ease;
-    }
-
-    @keyframes fadeIn { from {opacity:0.3} to {opacity:1} }
-
     .post:hover img {
       transform: scale(1.06);
     }
 
-    /* BEAUTIFUL DOWNLOAD BUTTON — FINAL VERSION */
-    .download-btn {
+    /* Menu button (3 dots) */
+    .menu-btn {
       position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.95);
-      color: #000;
-      font-weight: 600;
-      font-size: 13px;
-      padding: 10px 22px;
-      border-radius: 30px;
-      text-decoration: none;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
       backdrop-filter: blur(10px);
-      opacity: 0;
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 10;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
-      gap: 6px;
-      white-space: nowrap;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 20;
+      transition: all 0.2s;
     }
 
-    .post:hover .download-btn {
-      opacity: 1;
-      bottom: 18px;
-      transform: translateX(-50%) translateY(-4px);
+    .menu-btn:hover {
+      background: rgba(0,0,0,0.9);
+      transform: scale(1.1);
     }
 
-    .download-btn svg {
-      width: 16px;
-      height: 16px;
+    /* Dropdown menu */
+    .menu-dropdown {
+      position: absolute;
+      top: 45px;
+      right: 8px;
+      background: rgba(20,20,20,0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+      z-index: 30;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      min-width: 160px;
     }
 
-    #confirmModal{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:99999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px}
-    #confirmModal.show{display:flex}
+    .menu-dropdown.show {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .menu-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+
+    .menu-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .menu-item.delete {
+      color: #ff4444;
+    }
+
+    .menu-item.delete:hover {
+      background: rgba(255,68,68,0.15);
+    }
+
+    .menu-item svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Delete confirmation modal */
+    #deleteModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    #deleteModal.show {
+      display: flex;
+    }
+
+    #deleteModal .modal-content {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    #deleteModal h2 {
+      margin: 0 0 10px 0;
+      font-size: 22px;
+      color: #ff4444;
+    }
+
+    #deleteModal p {
+      margin: 0 0 25px 0;
+      color: #999;
+      font-size: 14px;
+    }
+
+    #deleteModal .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .deleting {
+      opacity: 0.5;
+      pointer-events: none;
+      animation: fadeOut 0.3s ease;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: scale(0.9); }
+    }
   </style>
 </head>
 <body>
 
-<!-- header stays same -->
 <div class="header">
   <h1>Freshers Gallery • <%= roll %></h1>
   <div class="header-controls">
@@ -105,17 +194,21 @@
 
 <div class="feed" id="feed"></div>
 
-<div id="confirmModal">
-  <h2>Leave Gallery?</h2>
-  <p>You will be logged out</p>
-  <div style="display:flex;gap:12px">
-    <button class="btn btn-outline-light" onclick="stayHere()">Stay</button>
-    <button class="btn btn-light" onclick="reallyLogout()">Logout</button>
+<!-- Delete confirmation modal -->
+<div id="deleteModal">
+  <div class="modal-content">
+    <h2>Delete Image?</h2>
+    <p>This will remove <strong id="deleteImageName"></strong> from the gallery permanently.</p>
+    <div class="modal-buttons">
+      <button class="btn btn-outline-light" onclick="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
   </div>
 </div>
 
 <script>
   const images = <%- JSON.stringify(images) %>;
+  const batch = '<%= batch %>'; // Get batch from server
 
   const sorted = images
     .map(img => ({ ...img, num: parseInt(img.name.match(/IMG_(\d+)/)?.[1] || '99999') }))
@@ -125,6 +218,7 @@
   let page = 0;
   let filtered = sorted;
   let isLoading = false;
+  let currentDeleteImage = null;
 
   const feed = document.getElementById("feed");
   const stats = document.getElementById("stats");
@@ -141,48 +235,168 @@
 
     for (let i = start; i < end; i++) {
       const imgData = filtered[i];
-      const filename = imgData.name.replace(/\.(jpe?g|png)$/i, '.webp'); // final filename
+      const filename = imgData.name.replace(/\.(jpe?g|png)$/i, '.webp');
 
       const post = document.createElement("div");
       post.className = "post";
+      post.dataset.imageName = imgData.name;
 
-      // LQIP background + lazy thumb
       post.style.backgroundImage = `url('${imgData.lqip}')`;
       post.style.backgroundSize = 'cover';
       post.style.backgroundPosition = 'center';
 
       post.innerHTML = `
         <img class="post-img" src="${imgData.thumb}" alt="${imgData.name}" loading="lazy">
+        
+        <!-- Menu button -->
+        <button class="menu-btn" onclick="toggleMenu(event, this)">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="5" r="2"/>
+            <circle cx="12" cy="12" r="2"/>
+            <circle cx="12" cy="19" r="2"/>
+          </svg>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div class="menu-dropdown">
+          <div class="menu-item" onclick="event.stopPropagation(); downloadImage('${imgData.download}', '${imgData.name}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Download
+          </div>
+          <div class="menu-item delete" onclick="event.stopPropagation(); showDeleteModal('${imgData.name}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <line x1="10" y1="11" x2="10" y2="17"/>
+              <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+            Delete
+          </div>
+        </div>
       `;
 
       const img = post.querySelector("img");
       img.onload = () => img.classList.add("loaded");
 
-      // Prefetch full-res on thumb load (optional)
-      img.onload = () => { new Image().src = imgData.download; };
-
-      // DOWNLOAD BUTTON — FINAL & 100% WORKING
-      const downloadLink = document.createElement("a");
-      downloadLink.href = `/download/${filename}`;  // This hits your protected route
-      downloadLink.className = "download-btn";
-      downloadLink.target = "_blank"; // optional: opens in new tab (safe fallback)
-      downloadLink.rel = "noopener";
-      downloadLink.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-        Download
-      `;
-
-      post.appendChild(downloadLink);
       frag.appendChild(post);
     }
 
     feed.appendChild(frag);
     page++;
     updateStats();
+  }
+
+  // Toggle menu dropdown
+  function toggleMenu(event, btn) {
+    event.stopPropagation();
+    const dropdown = btn.nextElementSibling;
+    
+    // Close all other menus
+    document.querySelectorAll('.menu-dropdown.show').forEach(menu => {
+      if (menu !== dropdown) menu.classList.remove('show');
+    });
+    
+    dropdown.classList.toggle('show');
+  }
+
+  // Close menus when clicking outside
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.menu-dropdown.show').forEach(menu => {
+      menu.classList.remove('show');
+    });
+  });
+
+  // Download image
+  async function downloadImage(url, name) {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        a.remove();
+      }, 100);
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Download failed. Please try again.');
+    }
+  }
+
+  // Show delete confirmation modal
+  function showDeleteModal(imageName) {
+    console.log('Delete requested for:', imageName); // Debug log
+    currentDeleteImage = imageName;
+    document.getElementById('deleteImageName').textContent = imageName;
+    document.getElementById('deleteModal').classList.add('show');
+  }
+
+  // Cancel delete
+  function cancelDelete() {
+    currentDeleteImage = null;
+    document.getElementById('deleteModal').classList.remove('show');
+  }
+
+  // Confirm delete - sends request to server
+  async function confirmDelete() {
+    if (!currentDeleteImage) return;
+
+    console.log('Deleting:', currentDeleteImage, 'from batch:', batch); // Debug log
+
+    try {
+      const response = await fetch('/delete-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // CRITICAL: Include session cookies
+        body: JSON.stringify({ 
+          imageName: currentDeleteImage,
+          batch: batch  // Send batch info to server
+        })
+      });
+
+      const result = await response.json();
+      console.log('Server response:', result); // Debug log
+
+      if (result.success) {
+        // Remove from DOM with animation
+        const postElement = document.querySelector(`[data-image-name="${currentDeleteImage}"]`);
+        if (postElement) {
+          postElement.classList.add('deleting');
+          setTimeout(() => postElement.remove(), 300);
+        }
+
+        // Remove from local array
+        const index = filtered.findIndex(img => img.name === currentDeleteImage);
+        if (index > -1) {
+          filtered.splice(index, 1);
+        }
+
+        updateStats();
+        cancelDelete();
+      } else {
+        alert('Failed to delete image: ' + (result.error || 'Unknown error'));
+        if (result.error && result.error.includes('Unauthorized')) {
+          alert('Your session expired. Please refresh the page and login again.');
+        }
+        cancelDelete();
+      }
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Failed to delete image. Please check your connection and try again.');
+      cancelDelete();
+    }
   }
 
   function search(q) {
@@ -194,7 +408,7 @@
   }
 
   function jumpToStart() { window.scrollTo(0, 0); }
-  function jumpToEnd() { window.scrollTo(document.body.scrollHeight); }
+  function jumpToEnd() { window.scrollTo(0, document.body.scrollHeight); }
 
   window.addEventListener("scroll", () => {
     if (isLoading || page * PER_PAGE >= filtered.length) return;
@@ -204,12 +418,7 @@
     }
   });
 
-  history.pushState({}, "");
-  window.onpopstate = () => document.getElementById("confirmModal").classList.add("show");
-  window.stayHere = () => document.getElementById("confirmModal").classList.remove("show");
-  window.reallyLogout = () => location.href = "/logout";
-
-  render(); // Start
+  render();
 </script>
 </body>
 </html>
