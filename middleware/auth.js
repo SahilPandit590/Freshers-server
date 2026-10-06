@@ -37,7 +37,7 @@ const validateRollFormat = (allowedYears = ['24', '25'], allowedBranches = ['1']
     // Attach both versions if needed
     req.validatedRoll = {
       original: roll,
-      normalized: normalizedRoll  // e.g., "24VD1A0561"
+      normalized: normalizedRoll  // e.g., "24VD1A0561saaa"
     };
 
     next();
